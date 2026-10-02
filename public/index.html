@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ALYZ BOT — Pairing</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="bg"><span></span><span></span><span></span></div>
+
+<main class="wrap">
+  <section id="intro" class="glass card">
+    <div class="mark"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+    <h1>ALYZ BOT</h1>
+    <p class="desc">ALYZ BOT adalah platform multi-device WhatsApp assistant yang membantu mengelola chat, grup, dan media langsung dari satu nomor WhatsApp, tanpa perlu membuka aplikasi terus-menerus.</p>
+    <button id="btnMulai" class="btn">MULAI</button>
+  </section>
+
+  <section id="pairForm" class="glass card" style="display:none">
+    <h2>Hubungkan Nomor</h2>
+    <p class="desc">Masukkan nomor WhatsApp diawali kode negara, contoh 628xxxxxxxxxx.</p>
+    <input id="phone" class="input" type="tel" placeholder="628xxxxxxxxxx" autocomplete="off">
+    <div id="formMsg"></div>
+    <button id="btnRequest" class="btn">DAPATKAN KODE</button>
+  </section>
+
+  <section id="pairResult" class="glass card" style="display:none">
+    <h2>Kode Pairing</h2>
+    <p class="desc">Buka WhatsApp di HP → Perangkat Tertaut → Tautkan Perangkat → Tautkan dengan nomor telepon, lalu masukkan kode berikut.</p>
+    <div id="codeBox" class="code"></div>
+    <p class="hint">Kode berlaku sebentar. Status akan berubah otomatis setelah berhasil terhubung.</p>
+  </section>
+
+  <section id="connected" class="glass card" style="display:none">
+    <div class="mark ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h2>Terhubung</h2>
+    <p class="desc" id="connNumber"></p>
+  </section>
+</main>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
