@@ -1,68 +1,68 @@
 const $ = (s) => document.querySelector(s);
+
 const show = (id) => {
-  ['intro', 'pairForm', 'pairResult', 'connected'].forEach((s) => {
-    const el = $('#' + s);
-    if(el) el.style.display = 'none';
+  ['intro', 'pairForm', 'pairResult', 'connected'].forEach(v => {
+    const el = document.getElementById(v);
+    if (el) el.style.display = 'none';
   });
-  const target = $('#' + id);
-  if(target) target.style.display = 'block';
+  const target = document.getElementById(id);
+  if (target) target.style.display = 'block';
 };
 
-// biar intro muncul pertama kali
-document.addEventListener('DOMContentLoaded', () => show('intro'));
+document.addEventListener('DOMContentLoaded', () => {
+  show('intro');
 
-$('#btnMulai').onclick = () => show('pairForm');
+  $('#btnMulai')?.addEventListener('click', () => {
+    show('pairForm');
+  });
 
-$('#btnRequest').onclick = async () => {
-  const input = $('#phone');
-  const phone = input.value.trim().replace(/[^0-9]/g, '');
-  const msg = $('#formMsg');
-  const btn = $('#btnRequest');
-  
-  if (!phone.startsWith('62') || phone.length < 10) {
-    msg.innerHTML = '<div class="error">HARUS FORMAT 62, CONTOH 62812XXXX</div>';
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.textContent = 'MEMINTA KODE...';
-  msg.innerHTML = '';
-  
-  try {
-    const res = await fetch('/api/pair', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Gagal membuat kode');
+  $('#btnRequest')?.addEventListener('click', async () => {
+    const phoneEl = $('#phone');
+    const msgEl = $('#formMsg');
+    const codeEl = $('#codeBox');
+    const btn = $('#btnRequest');
     
-    $('#codeBox').textContent = data.code.match(/.{1,4}/g).join('-'); // biar jadi XXXX-XXXX
-    $('#codeInfo').textContent = `Masukkan di WA: Setelan > Perangkat Tertaut > Tautkan dengan nomor telepon`;
-    show('pairResult');
-  } catch (e) {
-    msg.innerHTML = `<div class="error">${e.message.toUpperCase()}</div>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'MINTA KODE';
-  }
-};
+    let phone = phoneEl.value.replace(/[^0-9]/g, '');
+
+    if (!phone.startsWith('62') || phone.length < 10) {
+      msgEl.innerHTML = `<span style="color:#ff3b30">Nomor harus 62, contoh 6283176204764</span>`;
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'MEMINTA...';
+    msgEl.textContent = '';
+
+    try {
+      const res = await fetch('/api/pair', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal');
+
+      if (codeEl) codeEl.textContent = data.code;
+      show('pairResult');
+    } catch (e) {
+      msgEl.textContent = e.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'DAPATKAN KODE';
+    }
+  });
+});
 
 async function pollStatus() {
   try {
     const res = await fetch('/api/status');
     const data = await res.json();
     if (data.connected) {
-      $('#connNumber').textContent = `Terhubung sebagai +${data.number} (${data.pushname || ''})`;
+      const conn = document.getElementById('connNumber');
+      if (conn) conn.textContent = `Terhubung sebagai +${data.number}`;
       show('connected');
     }
-  } catch (e) {}
+  } catch {}
 }
 setInterval(pollStatus, 3000);
 pollStatus();
-
-// biar bisa balik ke intro
-$('#btnLogout')?.addEventListener('click', async () => {
-  await fetch('/api/logout', {method: 'POST'});
-  show('intro');
-});
