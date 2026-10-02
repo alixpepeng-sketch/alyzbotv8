@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: alyz-bot
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "10000"
+    disk:
+      name: alyz-bot-sessions
+      mountPath: /app/sessions
+      sizeGB: 1
